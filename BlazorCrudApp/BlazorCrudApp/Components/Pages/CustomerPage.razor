@@ -1,0 +1,101 @@
+﻿@page "/customer"
+
+@inject ICustomerService CustomerService
+@inject NavigationManager NavManager
+@rendermode InteractiveServer
+
+<PageTitle>Customers</PageTitle>
+<h3>Customer</h3>
+<EditForm Model="Model" OnValidSubmit="Submit" FormName="customer-form">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label>
+        Customer Name:
+        <InputText @bind-Value="Model!.Customer_Name" />
+    </label>
+    <label>
+        Customer Address:
+        <InputText @bind-Value="Model!.Address" />
+    </label>
+    <label>
+        Customer Phone:
+        <InputText @bind-Value="Model!.Phone" />
+    </label> <br /> <br />
+    <button type="submit">Submit</button>
+    <button type="button" @onclick="Back">Cancel</button>
+</EditForm>
+
+
+
+<h1>Weather</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [SupplyParameterFromForm]
+    public CustomerModel? Model { get; set; }
+    private CustomerModel[]? customers;
+    protected override void OnInitialized() => Model ??= new();
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
+        customers = await CustomerService.GetAllAsync(Model!);
+    }
+    private async Task Submit()
+    {
+        try
+        {
+            var res = await Task.Run(() => CustomerService.Create(Model!));
+            if (res)
+            {
+                NavManager.NavigateTo("/weather",true);
+            }
+            else
+            {
+                NavManager.NavigateTo("/weather");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+    public void Back()
+    {
+        NavManager.NavigateTo("/weather", true);
+    }
+}
