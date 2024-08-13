@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
 using System.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BlazorCrudApp.Services;
 
@@ -79,8 +80,54 @@ public class CustomerService : ICustomerService
         }
     }
 
-    public List<CustomerModel> GetAllAsync()
+    public async Task<List<CustomerModel>> GetAllAsync()
     {
-        return;
+        List<CustomerModel> customers = new List<CustomerModel>();
+
+        using (var command = _context.Database.GetDbConnection().CreateCommand())
+        {
+            command.CommandText = "NFT_AUTH_TEST_PCK.Customers_GA";
+            command.CommandType = CommandType.StoredProcedure;
+
+            // Output cursor parameter
+            var cursorParam = new OracleParameter("p_sys_cursor", OracleDbType.RefCursor) { Direction = ParameterDirection.Output };
+            command.Parameters.Add(cursorParam);
+
+            try
+            {
+                await _context.Database.OpenConnectionAsync();
+
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    while (await result.ReadAsync())
+                    {
+                        customers.Add(new CustomerModel
+                        {
+                            Customer_Id = result["customer_id"].ToString()!,
+                            Customer_Name = result["customer_name"].ToString(),
+                            Address = result["address"].ToString(),
+                            Phone = result["phone"].ToString(),
+                            Auth1stBy = result["auth1stby"].ToString(),
+                            Auth2ndBy = result["auth2ndby"].ToString(),
+                            AuthStatus = result["authstatus"].ToString(),
+                            Auth2ndDt = result["auth2nddt"] != DBNull.Value ? Convert.ToDateTime(result["auth2nddt"]) : (DateTime?)null,
+                            MakeDt = result["makedt"] != DBNull.Value ? Convert.ToDateTime(result["makedt"]) : (DateTime?)null,
+                            Auth1stDt = result["auth1stdt"] != DBNull.Value ? Convert.ToDateTime(result["auth1stdt"]) : (DateTime?)null,
+                            MakeBy = result["makeby"].ToString()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while fetching customers: {ex.Message}");
+            }
+            finally
+            {
+                await _context.Database.CloseConnectionAsync();
+            }
+        }
+
+        return customers;
     }
 }

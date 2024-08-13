@@ -5,7 +5,8 @@
 @rendermode InteractiveServer
 
 <PageTitle>Customers</PageTitle>
-<h3>Customer</h3>
+
+<h3>Add Customer</h3>
 <EditForm Model="Model" OnValidSubmit="Submit" FormName="customer-form">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -27,12 +28,9 @@
 </EditForm>
 
 
-
-<h1>Weather</h1>
-
-<p>This component demonstrates showing data.</p>
-
-@if (forecasts == null)
+<br />
+<h1>Customers List</h1>
+@if (customers == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -41,20 +39,20 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Customer Id</th>
+                <th>Customer Name</th>
+                <th>Address</th>
+                <th>Phone</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var customer in customers!)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@customer.Customer_Id</td>
+                    <td>@customer.Customer_Name</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.Phone</td>
                 </tr>
             }
         </tbody>
@@ -64,15 +62,12 @@ else
 @code {
     [SupplyParameterFromForm]
     public CustomerModel? Model { get; set; }
-    private CustomerModel[]? customers;
+    private List<CustomerModel>? customers;
     protected override void OnInitialized() => Model ??= new();
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        customers = await CustomerService.GetAllAsync(Model!);
+        customers = await CustomerService.GetAllAsync();
     }
     private async Task Submit()
     {
@@ -81,7 +76,7 @@ else
             var res = await Task.Run(() => CustomerService.Create(Model!));
             if (res)
             {
-                NavManager.NavigateTo("/weather",true);
+                NavManager.NavigateTo("/customer",true);
             }
             else
             {
@@ -96,6 +91,6 @@ else
 
     public void Back()
     {
-        NavManager.NavigateTo("/weather", true);
+        NavManager.NavigateTo("/counter", true);
     }
 }
