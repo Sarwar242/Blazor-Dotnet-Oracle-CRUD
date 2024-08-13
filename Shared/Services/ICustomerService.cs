@@ -1,6 +1,6 @@
-﻿using BlazorCrudApp.Models;
+﻿using Shared.Models;
 
-namespace BlazorCrudApp.Services;
+namespace Shared.Services;
 
 public interface ICustomerService
 {

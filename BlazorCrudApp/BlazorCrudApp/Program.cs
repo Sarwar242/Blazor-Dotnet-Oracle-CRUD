@@ -1,6 +1,6 @@
 using BlazorCrudApp.Components;
-using BlazorCrudApp.Data;
-using BlazorCrudApp.Services;
+using Shared.Data;
+using Shared.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

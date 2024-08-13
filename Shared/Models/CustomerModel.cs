@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorCrudApp.Models;
+namespace Shared.Models;
 
 public class CustomerModel
 {

@@ -1,7 +1,7 @@
-﻿using BlazorCrudApp.Models;
+﻿using Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorCrudApp.Data;
+namespace Shared.Data;
 
 public class AppDbContext : DbContext
 {
@@ -10,5 +10,5 @@ public class AppDbContext : DbContext
 
 	}
 
-	public DbSet<CustomerModel> Customers_By_Sarwar { get; set; }
+	//public DbSet<CustomerModel> Customers_By_Sarwar { get; set; }
 }

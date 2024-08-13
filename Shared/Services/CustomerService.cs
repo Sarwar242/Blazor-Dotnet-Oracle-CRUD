@@ -1,14 +1,11 @@
-﻿using BlazorCrudApp.Data;
-using BlazorCrudApp.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
-using Oracle.ManagedDataAccess.Client;
+﻿using Oracle.ManagedDataAccess.Client;
+using Shared.Data;
+using Shared.Models;
 using System.Data;
-using System.Data.SqlClient;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
-namespace BlazorCrudApp.Services;
+namespace Shared.Services;
 
 public class CustomerService : ICustomerService
 {
@@ -19,7 +16,7 @@ public class CustomerService : ICustomerService
     }
     public bool Create(CustomerModel Model)
     {
-        var transaction = _context.Database.BeginTransaction(System.Data.IsolationLevel.Serializable); // Specify the isolation level here
+        var transaction = _context.Database.BeginTransaction(IsolationLevel.Serializable);
         try
         {
             var customer = Model;
