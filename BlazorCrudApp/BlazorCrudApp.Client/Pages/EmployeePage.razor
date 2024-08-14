@@ -1,0 +1,97 @@
+﻿@page "/employee"
+
+
+@inject ICustomerService CustomerService
+@inject NavigationManager NavManager
+@rendermode InteractiveAuto
+
+<PageTitle>Employee Client</PageTitle>
+
+<h3>Add Customer</h3>
+<EditForm Model="Model" OnValidSubmit="Submit" FormName="customer-form">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label>
+        Customer Name:
+        <InputText @bind-Value="Model!.Customer_Name" />
+    </label>
+    <label>
+        Customer Address:
+        <InputText @bind-Value="Model!.Address" />
+    </label>
+    <label>
+        Customer Phone:
+        <InputText @bind-Value="Model!.Phone" />
+    </label> <br /> <br />
+    <button type="submit">Submit</button>
+    <button type="button" @onclick="Back">Cancel</button>
+</EditForm>
+
+
+<br />
+<h1>Customers List</h1>
+@if (customers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Customer Id</th>
+                <th>Customer Name</th>
+                <th>Address</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers!)
+            {
+                <tr>
+                    <td>@customer.Customer_Id</td>
+                    <td>@customer.Customer_Name</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.Phone</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [SupplyParameterFromForm]
+    public CustomerModel? Model { get; set; }
+    private List<CustomerModel>? customers;
+    protected override void OnInitialized() => Model ??= new();
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        customers = await CustomerService.GetAllAsync();
+    }
+    private async Task Submit()
+    {
+        try
+        {
+            var res = await Task.Run(() => CustomerService.Create(Model!));
+            if (res)
+            {
+                NavManager.NavigateTo("/customer", true);
+            }
+            else
+            {
+                NavManager.NavigateTo("/weather");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+    public void Back()
+    {
+        NavManager.NavigateTo("/counter", true);
+    }
+}

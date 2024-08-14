@@ -1,0 +1,44 @@
+﻿@page "/designation"
+
+@inject IDesignationService DesignationService
+@inject NavigationManager NavManager
+@rendermode InteractiveAuto
+
+<PageTitle>Designations</PageTitle>
+
+<h1>Designations</h1>
+@if (designations == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Designation Id</th>
+                <th>Designation Name</th>
+                <th>Designation Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var designation in designations!)
+            {
+                <tr>
+                    <td>@designation.Designation_Id</td>
+                    <td>@designation.Designation_Name</td>
+                    <td>@designation.Designation_Priority</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<DesignationModel>? designations;
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        designations = await DesignationService.GetAllAsync();
+    }
+}

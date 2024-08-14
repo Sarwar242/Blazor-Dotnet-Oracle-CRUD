@@ -16,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseOracle(connectionString);
 });
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IDesignationService, DesignationService>();
 
 var app = builder.Build();
 

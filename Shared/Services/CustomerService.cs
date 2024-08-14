@@ -14,6 +14,7 @@ public class CustomerService : ICustomerService
     {
         _context = context;
     }
+	
     public bool Create(CustomerModel Model)
     {
         var transaction = _context.Database.BeginTransaction(IsolationLevel.Serializable);
@@ -52,7 +53,7 @@ public class CustomerService : ICustomerService
                 // Update the customer object with the new ID
                 if (Customer_Id.Value != null)
                 {
-                    customer.Customer_Id = Customer_Id.Value.ToString();
+                    customer.Customer_Id = Customer_Id.Value.ToString()!;
                 }
             }
 
